@@ -43,4 +43,19 @@ public class AttachmentController {
             .body(resource); // 응답 본문에 파일 담기
     }
     // STUDENT TODO: GET /attachments/{id}/view (image preview).
+    @GetMapping("/{id}/view")
+    public ResponseEntity<Resource> imagePreview(
+            @PathVariable final Long id
+    ) {
+
+        Attachment file = attachments.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "첨부파일이 없습니다."));
+
+        Resource resource = storage.load(file);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(file.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getOriginalFilename() + "\"")
+                .body(resource);
+    }
 }
