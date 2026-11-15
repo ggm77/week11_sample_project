@@ -3,6 +3,16 @@
 
 ## Project Information
 
+### 초기 실행 화면 (Customizing 이전)
+
+**게시글 목록** (`/posts`)
+
+![게시글 목록](docs/images/initial-list.png)
+
+**게시글 상세 및 첨부파일** (`/posts/1`)
+
+![게시글 상세](docs/images/initial-detail.png)
+
 ## Installation
 1. Java 17+ 및 MariaDB 준비, `CREATE DATABASE web11 CHARACTER SET utf8mb4;`
 2. 환경변수 `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`를 자신의 MariaDB에 맞게 설정. 기본값은 `jdbc:mariadb://localhost:3306/web11`, `webuser`, `webpass`.
