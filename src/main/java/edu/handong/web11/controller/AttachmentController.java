@@ -8,6 +8,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/attachments")
@@ -50,6 +51,13 @@ public class AttachmentController {
 
         Attachment file = attachments.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "첨부파일이 없습니다."));
+
+        String filename = file.getOriginalFilename().toLowerCase(Locale.ROOT);
+        if (!(filename.endsWith(".jpg")
+                || filename.endsWith(".jpeg")
+                || filename.endsWith(".png")
+                || filename.endsWith(".gif")))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "미리보기는 이미지 파일(jpg, jpeg, png, gif)만 지원합니다.");
 
         Resource resource = storage.load(file);
 
