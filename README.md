@@ -96,6 +96,45 @@ MultipartFile은 multipart/form-data 요청으로 업로드된 파일을 Spring�
 
 ## New Feature
 ## Testing & Deployment
+
+### Local Testing
+
+테스트 스크린샷은 `results/` 폴더에 저장했다.
+
+**01. Sample Project 초기 실행 화면 (Customizing 이전)**
+
+![Sample Project 초기 실행 화면](results/01_sample.png)
+
+**02. 파일 업로드 성공 화면**
+
+이미지 파일(`1.jpeg`)을 첨부해 게시글을 작성했고, 상세 화면의 첨부파일 목록에 파일명, 크기, 타입이 표시되었다.
+
+![파일 업로드 성공](results/02_upload.png)
+
+**03. 파일 다운로드 성공 화면**
+
+![파일 다운로드 성공](results/03_download.png)
+
+**04. 이미지 미리보기 실행 화면**
+
+첨부한 이미지 파일(`1.jpeg`)이 상세 화면에 미리보기로 표시된다. 이미지가 아닌 파일(PDF, TXT)은 미리보기 없이 다운로드 버튼만 표시된다.
+
+![이미지 미리보기](results/04_preview.png)
+
+**CRUD 및 오류 처리 테스트**
+
+- 작성: 파일 2개를 첨부한 게시글 작성 후 상세 화면으로 이동(302 → `/posts/4`)
+- 수정: 제목과 내용을 수정한 뒤 상세 화면에 변경된 제목이 표시됨
+- 삭제: 삭제 후 목록으로 이동하고, 같은 게시글 조회 시 404
+- 다운로드: 받은 파일이 업로드한 원본 파일과 동일함(SHA-1 일치), `Content-Disposition: attachment`로 원본 파일명 유지
+- 입력값 검증: 제목을 비우고 작성하면 폼으로 돌아가 "공백일 수 없습니다" 오류 메시지 표시
+- 존재하지 않는 게시글(`/posts/99999`): 404
+- 존재하지 않는 첨부파일 다운로드·미리보기(`/attachments/99999/download`, `/attachments/99999/view`): 404
+- 잘못된 ID 형식(`/posts/abc`, `/attachments/abc/view`): 400
+
+### Deployment
+
+- Render Deployment URL: (배포 후 작성)
 ## Weekly Review:
 - 새롭게 배운 내용 3가지
 - 어려웠던 점과 해결 방법
