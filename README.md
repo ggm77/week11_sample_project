@@ -63,6 +63,37 @@ MultipartFile은 multipart/form-data 요청으로 업로드된 파일을 Spring�
 
 
 ## Customizing
+
+### 1. Text: 작성 버튼 문구 변경
+
+수정 파일: `src/main/resources/templates/posts/list.html`
+
+목록 화면의 작성 버튼 문구를 `+ 게시글 작성`에서 `+ 새 글 쓰기`로 바꿨다.
+
+### 2. Style: 배경색 변경
+
+수정 파일: `src/main/resources/static/css/app.css`
+
+`body`의 배경색을 회색빛 파란색(`#f5f7fb`)에서 연한 초록색(`#eef6f1`)으로 바꿨다.
+
+### 3. UI/Data: 파일 타입 표시
+
+수정 파일: `src/main/resources/templates/posts/detail.html`
+
+변경 전에는 첨부파일 목록에 파일명과 크기만 보였다. 변경 후에는 크기 옆에 `Attachment`의 `contentType`을 함께 표시한다.
+
+화면(템플릿, CSS)만 수정했으므로 기존 게시글 CRUD와 파일 업로드·다운로드 기능은 그대로 유지된다.
+
+### 변경 후 실행 화면
+
+**게시글 목록** (`/posts`): 버튼 문구와 배경색 변경
+
+![변경 후 게시글 목록](docs/images/custom-list.png)
+
+**게시글 상세** (`/posts/1`): 배경색 변경, 파일 타입(`image/jpeg`) 표시
+
+![변경 후 게시글 상세](docs/images/custom-detail.png)
+
 ## New Feature
 ## Testing & Deployment
 ## Weekly Review:
