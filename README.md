@@ -1,7 +1,19 @@
-# Week 11 — Attachment Board (Student Sample)
+# Week 11 — Attachment Board
+
+### Deployment
+
+- GitHub(조직): https://github.com/2026-2-WebService/assign11-c01-22300378.git
+- GitHub(개인): https://github.com/ggm77/week11_sample_project.git
+- Render Deployment URL: https://week11-sample-project.onrender.com
 
 
 ## Project Information
+
+Spring Boot, Thymeleaf, JPA, MariaDB로 만든 파일 첨부 게시판이다. 게시글 CRUD와 함께 첨부파일 업로드·다운로드, 이미지 미리보기 기능을 제공한다.
+
+- GitHub Repository URL: https://github.com/2026-2-WebService/assign11-c01-22300378
+- Render Deployment URL: (배포 후 작성)
+- 기술 스택: Java 17, Spring Boot 3.5, Spring Data JPA, Thymeleaf, Bootstrap 5, MariaDB, Docker
 
 ### 초기 실행 화면 (Customizing 이전)
 
@@ -16,10 +28,18 @@
 ## Installation
 1. Java 17+ 및 MariaDB 준비, `CREATE DATABASE web11 CHARACTER SET utf8mb4;`
 2. 환경변수 `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`를 자신의 MariaDB에 맞게 설정. 기본값은 `jdbc:mariadb://localhost:3306/web11`, `webuser`, `webpass`.
-3. Gradle이 설치된 환경: `gradle bootRun` / IntelliJ: `AttachmentBoardApplication.main()` 실행.
-4. 접속: http://localhost:8080/posts
+3. 업로드 파일 저장 폴더는 환경변수 `UPLOAD_DIR`로 바꿀 수 있다. 기본값은 프로젝트 루트의 `uploads/`이다.
+4. 실행: 터미널에서 `./gradlew bootRun`, 또는 IntelliJ에서 `AttachmentBoardApplication.main()` 실행.
+5. Docker로 실행할 경우: `docker build -t attachment-board .` 후 `docker run -p 8080:8080 -e DB_URL=... -e DB_USERNAME=... -e DB_PASSWORD=... attachment-board`
+6. 접속: http://localhost:8080/posts
 
 ## Source Code Exploration
+
+### Line-by-Line 주석을 작성한 메서드
+
+- `PostController.create()`: 게시글 작성 및 파일 업로드 요청 처리 (`src/main/java/edu/handong/web11/controller/PostController.java`)
+- `FileStorageService.store()`: 파일 검증, 저장 경로 생성 및 실제 파일 저장 (`src/main/java/edu/handong/web11/service/FileStorageService.java`)
+- `AttachmentController.download()`: 파일 조회 및 HTTP 다운로드 응답 처리 (`src/main/java/edu/handong/web11/controller/AttachmentController.java`)
 
 ### 1. Project Structure & Spring MVC
 
@@ -95,6 +115,30 @@ MultipartFile은 multipart/form-data 요청으로 업로드된 파일을 Spring�
 ![변경 후 게시글 상세](docs/images/custom-detail.png)
 
 ## New Feature
+
+### 이미지 미리보기 (Image Preview)
+
+게시글 상세 화면에서 첨부된 이미지(jpg, jpeg, png, gif)를 바로 볼 수 있게 했다.
+
+**1. 미리보기 API: `AttachmentController.imagePreview()`** (`GET /attachments/{id}/view`)
+
+- `AttachmentRepository.findById()`로 첨부파일 정보를 조회하고, 없으면 404를 반환한다.
+- `FileStorageService.load()`로 실제 파일을 `Resource`로 가져온다. 이때 경로가 업로드 폴더 밖이거나 디스크에 파일이 없으면 404를 반환한다.
+- 응답의 `Content-Type`은 업로드 시 확장자로 정해 DB에 저장한 `contentType`(예: `image/jpeg`)을 사용한다.
+- `Content-Disposition`을 `inline`으로 보내 브라우저가 파일을 다운로드하지 않고 화면에 바로 표시하게 했다. 다운로드 API는 `attachment`를 쓰는 것과 차이가 있다.
+
+**2. 화면: `detail.html`**
+
+- 첨부파일 목록을 `th:each`로 돌면서 `th:if="${#strings.startsWith(file.contentType, 'image/')}"`로 이미지 파일만 골라낸다.
+- 이미지 파일은 `<img th:src="@{/attachments/{id}/view(id=${file.id})}">`로 미리보기를 표시한다.
+- PDF, TXT 등 이미지가 아닌 파일은 미리보기 없이 기존 다운로드 버튼만 표시된다.
+
+**3. 오류 처리**
+
+- 존재하지 않는 첨부파일 ID(`/attachments/99999/view`): 404
+- 숫자가 아닌 잘못된 ID(`/attachments/abc/view`): 400
+- DB에는 정보가 있지만 디스크에 파일이 없는 경우: `FileStorageService.load()`에서 404
+
 ## Testing & Deployment
 
 ### Local Testing
@@ -134,8 +178,29 @@ MultipartFile은 multipart/form-data 요청으로 업로드된 파일을 Spring�
 
 ### Deployment
 
-- Render Deployment URL: (배포 후 작성)
-## Weekly Review:
-- 새롭게 배운 내용 3가지
-- 어려웠던 점과 해결 방법
-- AI 활용 내용 및 느낀 점
+- GitHub(조직): https://github.com/2026-2-WebService/assign11-c01-22300378.git
+- GitHub(개인): https://github.com/ggm77/week11_sample_project.git
+- Render Deployment URL: https://week11-sample-project.onrender.com
+
+## Weekly Review
+
+### 새롭게 배운 내용 3가지
+
+1. **멀티파트 파일 업로드 흐름**: form에 `enctype="multipart/form-data"`를 지정하면 파일이 `MultipartFile`로 컨트롤러에 전달되고, 서비스에서 검증한 뒤 `Files.copy()`로 디스크에 저장한다는 흐름을 알게 되었다.
+2. **JPA 연관관계와 실제 파일의 분리**: `cascade`와 `orphanRemoval`은 DB의 엔티티에만 적용되기 때문에, 게시글을 삭제할 때 디스크의 파일은 따로 지워야 한다는 점을 배웠다.
+3. **파일 응답과 보안**: `Resource`, `ResponseEntity`, `Content-Disposition`으로 다운로드(`attachment`)와 미리보기(`inline`) 응답을 다르게 만들 수 있고, `normalize()`와 `startsWith()`로 Path Traversal을 막는 방법을 배웠다.
+
+### 어려웠던 점과 해결 방법
+
+- **이미지 파일만 골라 미리보기 표시하기**: 첨부파일에는 PDF, TXT도 있어서 모든 파일에 `<img>`를 붙일 수는 없었다. DB에 저장된 `contentType`이 `image/`로 시작하는지 `th:if`로 검사해 이미지 파일에만 미리보기를 표시했다.
+
+### AI 활용 내용 및 느낀 점
+
+**활용 내용** (Claude Code 사용)
+
+- 직접 작성한 주석 중 잘못된 설명 검토 및 수정
+- `@RequestParam`과 `@RequestPart`의 차이, `BindingResult`의 역할 등 코드 이해를 위한 질문
+
+**느낀 점**
+
+주석을 하나 하나 작성하면서 내가 못봤던 부분이 보이기 시작하고, 그걸 AI에게 물어보니 공부가 더 잘되는 느낌이 들었다.
