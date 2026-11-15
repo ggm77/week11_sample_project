@@ -1,18 +1,11 @@
 # Week 11 — Attachment Board
 
-### Deployment
-
-- GitHub(조직): https://github.com/2026-2-WebService/assign11-c01-22300378.git
-- GitHub(개인): https://github.com/ggm77/week11_sample_project.git
-- Render Deployment URL: https://week11-sample-project.onrender.com
-
-
 ## Project Information
 
 Spring Boot, Thymeleaf, JPA, MariaDB로 만든 파일 첨부 게시판이다. 게시글 CRUD와 함께 첨부파일 업로드·다운로드, 이미지 미리보기 기능을 제공한다.
 
 - GitHub Repository URL: https://github.com/2026-2-WebService/assign11-c01-22300378
-- Render Deployment URL: (배포 후 작성)
+- Render Deployment URL: https://week11-sample-project.onrender.com
 - 기술 스택: Java 17, Spring Boot 3.5, Spring Data JPA, Thymeleaf, Bootstrap 5, MariaDB, Docker
 
 ### 초기 실행 화면 (Customizing 이전)
